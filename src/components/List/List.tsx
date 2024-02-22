@@ -1,10 +1,10 @@
 import React from 'react';
-import { IUser } from '../../types';
 import Card from '../Card/Card';
+import { IRepository } from '../../types';
 import './list.css';
 
 interface IListProps {
-  users: IUser[];
+  users: IRepository[];
 }
 
 export default function List({ users }: IListProps) {

@@ -1,32 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
 import List from './components/List/List';
-import { IUser } from './types';
-import axios from 'axios';
+import { useQuery } from '@apollo/client';
+import {GET_USERS} from './gqlQueries/getUsers';
 
 function App() {
-  const [users, setUsers] = useState<IUser[] | []>([]);
-  const [isLoading, setLoading] = useState(false);
-  useEffect(() => {
-    const getUsers = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axios.get('https://api.github.com/repositories');
-        setUsers(data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.error(error);
-      }
-    };
+  const { loading, error, data } = useQuery(GET_USERS);
 
-    getUsers();
-  }, []);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error ...</p>;
+
 
   return (
     <div className='App'>
-      {isLoading && <p>Loading</p>}
-      {!isLoading && users && <List users={users} />}
+      {loading && <p>Loading</p>}
+      {!loading && data && <List users={data.repositories} />}
     </div>
   );
 }
