@@ -1,24 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import List from './components/List/List';
+import { IUser } from './types';
+import axios from 'axios';
 
 function App() {
+  const [users, setUsers] = useState<IUser[] | []>([]);
+  const [isLoading, setLoading] = useState(false);
+  useEffect(() => {
+    const getUsers = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get('https://api.github.com/repositories');
+        setUsers(data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        console.error(error);
+      }
+    };
+
+    getUsers();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      {isLoading && <p>Loading</p>}
+      {!isLoading && users && <List users={users} />}
     </div>
   );
 }
